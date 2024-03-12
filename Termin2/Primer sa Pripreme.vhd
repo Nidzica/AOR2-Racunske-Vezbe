@@ -1,31 +1,26 @@
+--Na VHDL-u, korišćenjem konkurentnih klauzula dodele vrednosti signalu, opisati D flipflop sa 
+--asinhronim resetom, i koji se okida prednjom ivicom. Portovi treba da su tipa bit. Kreirati 
+--testbenč sa talasnim oblicima ulaza koji demonstriraju sve osobine kola - željene i nepoželjne. 
+
 library IEEE;
 use ieee.std_logic_1164.all;
 
-entity edge_triggered_Dff is
+entity priprema is
     port ( D: IN bit;
            clk: IN bit;
            clr: IN bit;
            Q: OUT bit);
 end entity;
 
-architecture edge_triggered_Dff_arch of edge_triggered_Dff is
+architecture priprema_arch of priprema is
 begin
-    promena : process (clk) -- Kod sinhronog je clr nije u listi osetljivosti
-    begin
-        if clk'event and clk = '1' then
-            if clr ='1' then
-                Q <= '0' after 2ns;
-            else 
-                Q <= d after 2ns;   
-            end if; 
-        end if;
-    end process;
+    Q <= '0' when clr = '1' else
+   		  D when clk'event and clk = '1';
 end architecture;
 
 
-
 --------------------------------------------------
---TEST BENCH, testiraj
+--TEST BENCH
 --------------------------------------------------
 
 library IEEE;
@@ -38,7 +33,7 @@ architecture testbench_arch of testbench is
     SIGNAL D_tb, clk_tb, clr_tb, Q_tb : bit;
 
 begin
-    DUT: entity work.edge_triggered_Dff(edge_triggered_Dff_arch)
+    DUT: entity work.priprema(priprema_arch)
         port map(D => D_tb,
                  q => Q_tb,
                  clk => clk_tb,
@@ -69,4 +64,5 @@ begin
         D_tb <= '0';
         wait;
     end process;
+end architecture;
 end architecture;
